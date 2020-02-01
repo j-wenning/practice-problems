@@ -10,7 +10,7 @@ function getPathParts(str){
     protocol : newStr[1].split(":").shift(),
     host : newStr[1].split(":").shift(),
     port : newStr[1].split(":").pop(),
-    // path : ,
+    path : "path",
     file : newStr.pop(),
   };
 }
