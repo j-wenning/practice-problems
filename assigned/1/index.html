@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Practice</title>
+  </head>
+  <body>
+
+    <script>
+      // declare function
+      // set string
+      // loop through num * 2 - 1
+      //
+
+      function makeTree(num) {
+        let str = "\n";
+        for(let i = 1; i <= num; ++i) {
+          for (let x = 0; x < num * 2 - 1; ++x)
+            if (x < num - i || x > num + i - 2 )
+              str += "#";
+            else
+              str += "*";
+          str += "\n";
+        }
+        return str;
+      }
+    </script>
+  </body>
+</html>

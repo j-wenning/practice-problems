@@ -1,7 +1,7 @@
 
 
-function getPath(){
-
+function getPath(str){
+  return str.split("/");
 }
 
 function getPathParts(){
