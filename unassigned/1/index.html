@@ -6,12 +6,18 @@
       body {
         background-color: rgb(53, 53, 53);
       }
+      main {
+        display: flex;
+        height: 100vh;
+        width: 50vh;
+        justify-content: center;
+        align-items: center;
+      }
       .game-board {
         display: flex;
         flex-wrap: wrap;
         background-color: gray;
-        height: 50vh;
-        width: 50%;
+        width: 100%;
       }
       .cell {
         box-sizing: border-box;
@@ -23,44 +29,59 @@
   <body>
     <main></main>
     <script>
+      const EMPTY = -1;
+
       class Gameboard {
         element;
         grid;
         players;
-        constructor(x, y, players) {
+        constructor(gridX, gridY, players) {
           this.players = players;
           this.element = document.querySelector("main").appendChild(document.createElement("div"));
           this.element.classList.add("container", "game-board");
-          this.element.addEventListener("click", this.getCell);
-          this.initializeGrid(x, y);
+          this.element.addEventListener("click", e => this.getCellPos(e));
+          this.initializeGrid(gridX, gridY);
         };
-        initializeGrid(x, y) {
-          let currentElement;
+        initializeGrid(gridX, gridY) {
+          let currentElement = this.element;
+
           this.grid = [];
-          for(let gridX = 0; gridX < x; ++gridX) {
+          currentElement.setAttribute("style",
+                                      `height: ${100 * gridX / gridY}%;`);
+                                    // + `width: ${100* gridX / gridY }%`);
+          for(let x = 0; x < gridX; ++x) {
             this.grid.push([]);
-            for(let gridY = 0; gridY < y; ++gridY) {
+            for(let y = 0; y < gridY; ++y) {
               currentElement = document.createElement("div");
-              currentElement.classList.add("container", "cell");
+              currentElement.classList.add("container", "cell", "empty");
               currentElement.setAttribute("style",
-                                          `flex-basis: calc(100%/${y});`
-                                        + `height: calc(100%/${x});`
+                                          `flex-basis: ${100 / gridY}%;`
+                                        + `height: ${100 / gridX}%;`
               );
-              this.grid[gridX].push(currentElement);
+              currentElement.setAttribute("data-col", y);
+              currentElement.setAttribute("data-row", gridX - x - 1);
+              currentElement.setAttribute("value", EMPTY);
+              this.grid[x].push(currentElement);
               this.element.appendChild(currentElement);
             }
           }
         };
-        getCell(event) { // need to override the event usage of this somehow
-          let i = 0;
-          console.log(this.grid[i]);
-          console.log("called");
-          // if(event.target.classList.contains("cell"))
-          //   while(this.grid[i].length > i++)
-          //     if(this.grid[i].includes(event.target))
-          //       return this.grid[i].indexOf(event.target);
-          // return null;
-        };
+
+        compareWith(x, y) {
+          // return
+        }
+        getCell(x, y) {
+          return this.grid[x][y];
+        }
+        getCellPos(e) {
+          return {x: this.getCellX(e.target), y: this.getCellY(e.target)};
+        }
+        getCellY(target) {
+          return target.getAttribute("data-col");
+        }
+        getCellX(target) {
+          return target.getAttribute("data-row");
+        }
       };
 
       var a = new Gameboard(2, 10, 2);
