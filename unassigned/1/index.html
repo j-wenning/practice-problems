@@ -23,6 +23,11 @@
         box-sizing: border-box;
         background-color: lightgray;
         border: 1px solid black;
+        height: 10vh;
+      }
+      .slot {
+        width: 100%;
+        height: 100%;
       }
     </style>
   </head>
@@ -35,40 +40,68 @@
         element;
         grid;
         players;
+        pieces;
         constructor(gridX, gridY, players) {
           this.players = players;
+          this.pieces = [
+            "fox-piece",
+            "falco-piece",
+            "slippy-piece",
+            "krystal-piece",
+            "andross-piece",
+            "peppy-piece"
+          ];
+          this.pieces.length = players;
           this.element = document.querySelector("main").appendChild(document.createElement("div"));
           this.element.classList.add("container", "game-board");
           this.element.addEventListener("click", e => this.getCellPos(e));
           this.initializeGrid(gridX, gridY);
-        };
+        }
         initializeGrid(gridX, gridY) {
           let currentElement = this.element;
 
           this.grid = [];
-          currentElement.setAttribute("style",
-                                      `height: ${100 * gridX / gridY}%;`);
+          // currentElement.setAttribute("style",
+                                      // `height: ${100 * gridY / gridX}%;`);
                                     // + `width: ${100* gridX / gridY }%`);
           for(let x = 0; x < gridX; ++x) {
             this.grid.push([]);
             for(let y = 0; y < gridY; ++y) {
               currentElement = document.createElement("div");
-              currentElement.classList.add("container", "cell", "empty");
+              this.grid[x].push(currentElement);
+              this.element.appendChild(currentElement);
+              currentElement.classList.add("container", "cell");
               currentElement.setAttribute("style",
                                           `flex-basis: ${100 / gridY}%;`
-                                        + `height: ${100 / gridX}%;`
+                                        + `height: ${100 / gridX}vh;`
               );
               currentElement.setAttribute("data-col", y);
               currentElement.setAttribute("data-row", gridX - x - 1);
+              currentElement = currentElement.appendChild(document.createElement("div"));
+              currentElement.classList.add("slot", "empty");
               currentElement.setAttribute("value", EMPTY);
-              this.grid[x].push(currentElement);
-              this.element.appendChild(currentElement);
             }
           }
-        };
+        }
 
-        compareWith(x, y) {
-          // return
+
+        updateCellSlot(slot) {
+          return slot.classList.replace(slot.classList.item(1), this.pieces[Number(slot.getAttribute("value"))]);
+        }
+        setCell(x, y, value, force = false) {
+          const slot = this.grid[x][y].firstElementChild;
+
+          if(force || getCellValue(x, y) != EMPTY) {
+            slot.setAttribute("value", value);
+            return this.updateCellSlot(slot);
+          }
+          return false;
+        }
+        compareCells(x1, y1, x2, y2) {
+          return this.getCellValue(x1, y1) === this.getCellValue(x2, y2);
+        }
+        getCellValue(x, y) {
+          return this.getCell(x, y).value;
         }
         getCell(x, y) {
           return this.grid[x][y];
@@ -84,7 +117,7 @@
         }
       };
 
-      var a = new Gameboard(2, 10, 2);
+      var a = new Gameboard(7, 6, 2);
     </script>
     <script>
 
