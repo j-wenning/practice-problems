@@ -36,6 +36,18 @@
       .falco-piece {
         background-color: blue;
       }
+      .slippy-piece {
+        background-color: green;
+      }
+      .krystal-piece {
+        background-color: purple;
+      }
+      .andross-piece {
+        background-color: yellow;
+      }
+      .peppy-piece {
+        background-color: orange;
+      }
     </style>
   </head>
   <body>
@@ -87,19 +99,19 @@
           // currentElement.setAttribute("style",
                                       // `height: ${100 * gridY / gridX}%;`);
                                     // + `width: ${100* gridX / gridY }%`);
-          for(let x = 0; x < gridX; ++x) {
+          for(let y = 0; y < gridY; ++y) {
             this.grid.push([]);
-            for(let y = 0; y < gridY; ++y) {
+            for(let x = 0; x < gridX; ++x) {
               currentElement = document.createElement("div");
-              this.grid[x].push(currentElement);
+              this.grid[y].push(currentElement);
               this.element.appendChild(currentElement);
               currentElement.classList.add("container", "cell");
               currentElement.setAttribute("style",
-                                          `flex-basis: ${100 / gridY}%;`
-                                        + `height: ${100 / gridX}%;`
+                                          `flex-basis: ${100 / gridX}%;`
+                                        + `height: ${100 / gridY}%;`
               );
-              currentElement.setAttribute("data-col", y);
-              currentElement.setAttribute("data-row", x);
+              currentElement.setAttribute("data-col", x);
+              currentElement.setAttribute("data-row", y);
               currentElement = currentElement.appendChild(document.createElement("div"));
               currentElement.classList.add("slot", "empty");
               currentElement.setAttribute("value", EMPTY);
@@ -124,13 +136,17 @@
           if(target.classList.contains("slot"))
             target = target.parentElement;
           if(target.classList.contains("cell"))
-            if(this.setSlot(target, this.currentPlayer))
-              if(this.checkWin(target))
+            if(this.pushToSlot(target, this.currentPlayer))
+              if(this.checkWin(target)) // will likely need to move to pushtoslot bc it is calling on currently clicked square not wherever the piece is placed
                 console.log("win"); // call win sequence
               else this.incrementPlayer("current");
         }
+
         checkWin(target) {
           return this.checkWinAt(this.getCellX(target), this.getCellY(target));
+        }
+        pushToSlot(target, value) {
+          return this.pushToSlotAt(this.getCellX(target), value);
         }
         setSlot(target, value, force = false) {
           return this.setSlotAt(this.getCellX(target), this.getCellY(target), value, force);
@@ -139,13 +155,22 @@
           return slot.classList.replace(slot.classList.item(1), this.pieces[Number(slot.getAttribute("value"))]);
         }
         getCellY(cell) {
-          return Number(cell.getAttribute("data-col"));
+          return Number(cell.getAttribute("data-row"));
         }
         getCellX(cell) {
-          return Number(cell.getAttribute("data-row"));
+          return Number(cell.getAttribute("data-col"));
         }
 
         // grid handlers
+        pushToSlotAt(x, value) {
+          let y = 0;
+          while(y < this.grid.length) {
+            if (this.setSlotAt(x, y, value))
+              return true;
+            ++y;
+          }
+          return false;
+        }
         checkWinAt(x, y) {
           return this.checkAdjacent(x, y);
         }
@@ -159,21 +184,25 @@
           }
           count += this.checkDirectionAt(x, y, -1, 1);  // left up
           count += this.checkDirectionAt(x, y, 1, -1);  // right down
+          console.log("/", count);
           compareAndReset();
           count += this.checkDirectionAt(x, y, 1, 1);   // right up
           count += this.checkDirectionAt(x, y, -1, -1); // left down
+          console.log("\\", count);
           compareAndReset();
           count += this.checkDirectionAt(x, y, 0, 1);   // up
           count += this.checkDirectionAt(x, y, 0, -1);  // down
+          console.log("|", count);
           compareAndReset();
           count += this.checkDirectionAt(x, y, -1, 0);  // left
           count += this.checkDirectionAt(x, y, 1, 0);   // right
+          console.log("--", count);
           compareAndReset();
           return highestCount >= this.piecesToWin;
         }
         isValidAt(x, y) {
-          return x >=0 && x < this.grid.length &&
-                y >= 0 && y < this.grid[0].length;
+          return x >=0 && x < this.grid[0].length &&
+                y >= 0 && y < this.grid.length;
         }
         checkDirectionAt(x1, y1, xDir, yDir) {
           const x2 = x1 + xDir;
@@ -185,7 +214,7 @@
           return 0;
         }
         setSlotAt(x, y, value, force = false) {
-          const slot = this.grid[x][y].firstElementChild;
+          const slot = this.grid[y][x].firstElementChild;
 
           if(force || this.getSlotValueAt(x, y) === EMPTY) {
             slot.setAttribute("value", value);
@@ -194,21 +223,19 @@
           return false;
         }
         compareSlotsAt(x1, y1, x2, y2) {
-          return this.getSlotValueAt(x1, y1) === this.getSlotValueAt(x2, y2);
+          if(this.getSlotValueAt(x1, y1) !== EMPTY)
+            return this.getSlotValueAt(x1, y1) === this.getSlotValueAt(x2, y2);
+          return false;
         }
         getSlotValueAt(x, y) {
           return Number(this.getCellAt(x, y).firstElementChild.getAttribute("value"));
         }
         getCellAt(x, y) {
-          return this.grid[x][y];
+          return this.grid[y][x];
         }
-
       };
 
       var a = new Gameboard();
-    </script>
-    <script>
-
     </script>
   </body>
 </html>
