@@ -56,10 +56,49 @@
       const EMPTY = -1;
 
       class Scoreboard {
+        gameboard;
         players;
         scores;
-        constructor(players){
-          this.players = players;
+        timeLimit;
+        currentTime;
+        paused;
+        constructor(gameboard, players, timeLimit = 0){
+          this.scores = [];
+          this.players = [];
+          this.scores.length = players;
+          this.scores = this.scores.fill(0);
+          this.paused = true;
+          for(let player = 0; player < players.length; ++player)
+            players[player] = `Player ${player + 1}`;
+          this.setTimeLimit(timeLimit);
+          setInterval(()=>this.decrementTime(), 1000);
+          this.gameboard = gameboard;
+        }
+
+        togglePause() {
+          return this.paused = !this.paused;
+        }
+
+        setTimeLimit(time) {
+          this.timeLimit = time;
+          this.resetTime();
+          return this.timeLimit;
+        }
+
+        resetTime() {
+          return this.currentTime = this.timeLimit;
+        }
+
+        decrementTime() {
+          if(!this.paused && this.timeLimit > 0) {
+            console.log(this.currentTime);
+            --this.currentTime;
+            if (this.currentTime < 0) {
+              this.gameboard.incrementPlayer("current");
+              this.resetTime();
+            }
+          }
+          return this.currentTime;
         }
       }
 
@@ -73,7 +112,7 @@
         pieces;
         constructor(gridX = 7, gridY = 6, piecesToWin = 4, players = 2) {
           const main = document.querySelector("main");
-          this.scoreboard = new Scoreboard();
+          this.scoreboard = new Scoreboard(this, players);
           this.players = players;
           this.currentPlayer = 0;
           this.piecesToWin = piecesToWin;
@@ -85,7 +124,6 @@
             "andross-piece",
             "peppy-piece"
           ];
-          this.pieces.length = players;
           main.innerHTML = "";
           this.element = main.appendChild(document.createElement("div"));
           this.element.classList.add("container", "game-board");
@@ -104,7 +142,6 @@
             for(let x = 0; x < gridX; ++x) {
               currentElement = document.createElement("div");
               this.grid[y].push(currentElement);
-              this.element.appendChild(currentElement);
               currentElement.classList.add("container", "cell");
               currentElement.setAttribute("style",
                                           `flex-basis: ${100 / gridX}%;`
@@ -117,9 +154,20 @@
               currentElement.setAttribute("value", EMPTY);
             }
           }
+
+          // ensure grid builds with row number descending
+          for(let y = gridY - 1; y >= 0; --y)
+            for(let x = 0; x < gridX; ++x)
+              this.element.appendChild(this.grid[y][x]);
         }
 
-        // non-grid property handlers
+        // misc handlers
+        createScoreBoard(players, timeLimit) {
+          this.scoreboard = new Scoreboard(players, timeLimit);
+        }
+
+
+
         incrementPlayer(player) {
           switch(player) {
             case "current":
@@ -130,6 +178,10 @@
           }
         }
 
+        win() {
+          console.log(`Player ${this.currentPlayer + 1} wins`);
+        }
+
         // element handlers
         onClick(e) {
           let target = e.target;
@@ -137,9 +189,7 @@
             target = target.parentElement;
           if(target.classList.contains("cell"))
             if(this.pushToSlot(target, this.currentPlayer))
-              if(this.checkWin(target)) // will likely need to move to pushtoslot bc it is calling on currently clicked square not wherever the piece is placed
-                console.log("win"); // call win sequence
-              else this.incrementPlayer("current");
+              this.incrementPlayer("current");
         }
 
         checkWin(target) {
@@ -162,11 +212,19 @@
         }
 
         // grid handlers
+        refreshSlots() {
+          for(let y = 0; y < this.grid.length; ++y)
+            for(let x = 0; x < this.grid[0].length; ++x)
+              updateSlot(this.getSlotAt(x, y));
+        }
         pushToSlotAt(x, value) {
           let y = 0;
           while(y < this.grid.length) {
-            if (this.setSlotAt(x, y, value))
+            if (this.setSlotAt(x, y, value)) {
+              if (this.checkWinAt(x, y))
+                this.win();
               return true;
+            }
             ++y;
           }
           return false;
@@ -182,21 +240,21 @@
               highestCount = count;
             count = 1;
           }
+          // negative slant
           count += this.checkDirectionAt(x, y, -1, 1);  // left up
           count += this.checkDirectionAt(x, y, 1, -1);  // right down
-          console.log("/", count);
           compareAndReset();
+          // horizontal
           count += this.checkDirectionAt(x, y, 1, 1);   // right up
           count += this.checkDirectionAt(x, y, -1, -1); // left down
-          console.log("\\", count);
           compareAndReset();
+          // positive slant
           count += this.checkDirectionAt(x, y, 0, 1);   // up
           count += this.checkDirectionAt(x, y, 0, -1);  // down
-          console.log("|", count);
           compareAndReset();
+          // vertical
           count += this.checkDirectionAt(x, y, -1, 0);  // left
           count += this.checkDirectionAt(x, y, 1, 0);   // right
-          console.log("--", count);
           compareAndReset();
           return highestCount >= this.piecesToWin;
         }
@@ -214,7 +272,7 @@
           return 0;
         }
         setSlotAt(x, y, value, force = false) {
-          const slot = this.grid[y][x].firstElementChild;
+          const slot = this.getSlotAt(x, y);
 
           if(force || this.getSlotValueAt(x, y) === EMPTY) {
             slot.setAttribute("value", value);
@@ -228,14 +286,17 @@
           return false;
         }
         getSlotValueAt(x, y) {
-          return Number(this.getCellAt(x, y).firstElementChild.getAttribute("value"));
+          return Number(this.getSlotAt(x, y).getAttribute("value"));
+        }
+        getSlotAt(x, y) {
+          return this.getCellAt(x, y).firstElementChild;
         }
         getCellAt(x, y) {
           return this.grid[y][x];
         }
       };
 
-      var a = new Gameboard();
+      var a = new Gameboard(6, 7, 4, 2);
     </script>
   </body>
 </html>
