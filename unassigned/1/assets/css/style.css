@@ -3,6 +3,7 @@
 body {
   margin: 0;
   background-color: rgb(53, 53, 53);
+  color: white;
 }
 
 .container {
@@ -22,11 +23,23 @@ aside {
 }
 
 .player-card {
+  position: fixed;
   display: flex;
+  top: 0;
+}
+
+.player-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-basis: calc(100% / 3);
+  margin: auto;
 }
 
 .turn-card {
+  position: fixed;
   display: flex;
+  bottom: 0;
   height: 15%; /* sized for testing */
 }
 
