@@ -26,6 +26,7 @@ class Scoreboard {
   updateScore() {
     let currentPlayer = this.element.querySelector(".player-card .player-info");
     for(let player = 0; player < this.players.length; ++player) {
+      currentPlayer.firstElementChild.textContent = this.players[player];
       currentPlayer.lastElementChild.textContent = this.scores[player];
       currentPlayer = currentPlayer.nextElementSibling;
     }
@@ -59,7 +60,12 @@ class Scoreboard {
     }
     currentElement = this.element.appendChild(document.createElement("div"));
     currentElement.classList.add("container", "turn-card");
+    currentElement = currentElement.appendChild(document.createElement("div"));
+    currentElement.classList.add("container", "turn-item")
     currentElement.appendChild(document.createElement("div")).classList.add("slot", "empty");
+    currentElement = currentElement.parentElement;
+    currentElement = currentElement.appendChild(document.createElement("div"));
+    currentElement.classList.add("container", "turn-item")
     currentElement = currentElement.appendChild(document.createElement("div"));
     currentElement.classList.add("time");
     currentElement.appendChild(document.createElement("span"));

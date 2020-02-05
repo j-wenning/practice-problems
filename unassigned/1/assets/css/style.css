@@ -1,6 +1,12 @@
+@import url(reset.css);
+
 body {
   margin: 0;
   background-color: rgb(53, 53, 53);
+}
+
+.container {
+  width: 100%;
 }
 
 /* scoreboard css */
@@ -27,7 +33,6 @@ aside {
 .turn-card * {
   display: flex;
   height: 100%;
-  width: 100%;
   align-items: center;
   justify-content: center;
 }
