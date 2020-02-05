@@ -11,9 +11,26 @@ aside {
   width: 100%;
 }
 
-/* .scoreboard {
+.scoreboard {
+  height: 100%;
+}
 
-} */
+.player-card {
+  display: flex;
+}
+
+.turn-card {
+  display: flex;
+  height: 15%; /* sized for testing */
+}
+
+.turn-card * {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
 
 /* game board css */
 main {
