@@ -8,6 +8,11 @@ body {
   color: white;
 }
 
+button {
+  height: 20px;
+  width: 20px;
+}
+
 .container {
   width: 100%;
 }
