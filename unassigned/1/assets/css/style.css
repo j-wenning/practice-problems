@@ -1,0 +1,137 @@
+@import url(reset.css);
+
+body {
+  margin: 0;
+  height: 100vh;
+  width: 100%;
+  background-color: rgb(53, 53, 53);
+  color: white;
+}
+
+button {
+  height: 20px;
+  width: 20px;
+}
+
+.container {
+  width: 100%;
+}
+
+.modal {
+  z-index: 1;
+  display: flex;
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0,0,0,0.5);
+  box-shadow: inset 0 0 100px 0 black;
+}
+
+/* selection modal */
+.select-board {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.piece-card {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+/* scoreboard css */
+aside {
+  z-index: -1;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+}
+
+.scoreboard {
+  height: 100%;
+}
+
+.player-card {
+  position: fixed;
+  display: flex;
+  top: 0;
+}
+
+.player-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-basis: calc(100% / 3);
+  margin: auto;
+}
+
+.turn-card {
+  position: fixed;
+  display: flex;
+  bottom: 0;
+  height: 15%; /* sized for testing */
+}
+
+.turn-card * {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+/* game board css */
+main {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.game-board {
+  display: flex;
+  flex-wrap: wrap;
+  background-color: gray;
+  width: 100%;
+  height: 50%;
+}
+
+.cell {
+  box-sizing: border-box;
+  background-color: lightgray;
+  border: 1px solid black;
+}
+
+.slot {
+  width: 100%;
+  height: 100%;
+}
+
+/* game board piece css */
+.fox-piece {
+  background-color: red;
+}
+
+.falco-piece {
+  background-color: blue;
+}
+
+.slippy-piece {
+  background-color: green;
+}
+
+.krystal-piece {
+  background-color: purple;
+}
+
+.andross-piece {
+  background-color: yellow;
+}
+
+.peppy-piece {
+  background-color: orange;
+}
